@@ -35,10 +35,27 @@ function triangle(a, b, c) {
   ctx.lineTo(a.x, a.y);
   ctx.stroke();
 }
+
 const lt = new Vector2(0, 0);
 const rt = new Vector2(vw, 0);
 const lb = new Vector2(0, vh);
 const rb = new Vector2(vw, vh);
 const center = new Vector2(vw / 2, vh / 2);
 
-triangle(lt, rt, center);
+var mPos = new Vector2(0, 0);
+function DrawScreen(e) {
+  mPos.x = e.clientX;
+  mPos.y = e.clientY;
+}
+document.addEventListener("mousemove", DrawScreen);
+
+function draw() {
+  ctx.fillStyle = "rgba(256,256,256,0.1)";
+  ctx.fillRect(0, 0, vw, vh);
+  triangle(lt, rt, mPos);
+  triangle(rt, rb, mPos);
+  triangle(lb, lb, mPos);
+  triangle(lb, lt, mPos);
+  requestAnimationFrame(draw);
+}
+draw();
