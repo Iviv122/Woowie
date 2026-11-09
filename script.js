@@ -23,6 +23,12 @@ class Vector2 {
     this.x = x;
     this.y = y;
   }
+  add(other) {
+    return new Vector2(this.x + other.x, this.y + other.y);
+  }
+  sub(other) {
+    return new Vector2(this.x - other.x, this.y - other.y);
+  }
 }
 class Funs {
   static triangle(a, b, c) {
@@ -83,13 +89,18 @@ class DrawFunction {
     ctx.fillRect(0, 0, vw, vh);
     Funs.line(prevMPos, mPos);
   }
-  static multiLines() {
+  static DuoLines() {
     ctx.fillStyle = "rgba(256,256,256,0.1)";
     ctx.fillRect(0, 0, vw, vh);
-    ctx.beginPath();
-    ctx.moveTo(prevMPos.x, prevMPos.y);
-    ctx.lineTo(mPos.x, mPos.y);
-    ctx.stroke();
+
+    const v1 = new Vector2(
+      Math.abs(vw - prevMPos.x),
+      Math.abs(vh - prevMPos.y),
+    );
+    const v2 = new Vector2(Math.abs(vw - mPos.x), Math.abs(vh - mPos.y));
+
+    Funs.line(prevMPos, mPos);
+    Funs.line(v1, v2);
   }
 }
 
@@ -97,6 +108,7 @@ const foreground = [
   DrawFunction.triangles,
   DrawFunction.rectangles,
   DrawFunction.line,
+  DrawFunction.DuoLines,
 ];
 var currentForeground = 0;
 
