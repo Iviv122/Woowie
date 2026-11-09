@@ -14,8 +14,6 @@ const canvas = document.createElement("canvas");
 canvas.width = vw;
 canvas.height = vh;
 
-canvas.style = "border: 1px solid black";
-
 document.body.appendChild(canvas);
 
 const ctx = canvas.getContext("2d");
@@ -35,6 +33,14 @@ function triangle(a, b, c) {
   ctx.lineTo(a.x, a.y);
   ctx.stroke();
 }
+function rectangle(a, b) {
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.lineTo(a.x, b.y);
+  ctx.stroke();
+}
 
 const lt = new Vector2(0, 0);
 const rt = new Vector2(vw, 0);
@@ -43,19 +49,41 @@ const rb = new Vector2(vw, vh);
 const center = new Vector2(vw / 2, vh / 2);
 
 var mPos = new Vector2(0, 0);
-function DrawScreen(e) {
+function GetMousePos(e) {
   mPos.x = e.clientX;
   mPos.y = e.clientY;
 }
-document.addEventListener("mousemove", DrawScreen);
 
-function draw() {
-  ctx.fillStyle = "rgba(256,256,256,0.1)";
+function triangles() {
+  ctx.fillStyle = "rgba(256,256,256,0.3)";
   ctx.fillRect(0, 0, vw, vh);
   triangle(lt, rt, mPos);
   triangle(rt, rb, mPos);
   triangle(lb, lb, mPos);
   triangle(lb, lt, mPos);
+}
+function rectangles() {
+  ctx.fillStyle = "rgba(256,256,256,0.3)";
+  ctx.fillRect(0, 0, vw, vh);
+  rectangle(lt, mPos);
+  rectangle(rt, mPos);
+  rectangle(lb, mPos);
+  rectangle(lb, mPos);
+}
+
+const foreground = [triangles, rectangles];
+var currentForeground = 0;
+function SwapForeground() {
+  currentForeground = currentForeground + 1;
+  currentForeground %= foreground.length;
+}
+
+function draw() {
+  foreground[currentForeground]();
   requestAnimationFrame(draw);
 }
+
 draw();
+
+document.addEventListener("mousemove", GetMousePos);
+document.addEventListener("mousedown", SwapForeground);
