@@ -24,28 +24,29 @@ class Vector2 {
     this.y = y;
   }
 }
-
-function triangle(a, b, c) {
-  ctx.beginPath();
-  ctx.moveTo(a.x, a.y);
-  ctx.lineTo(b.x, b.y);
-  ctx.lineTo(c.x, c.y);
-  ctx.lineTo(a.x, a.y);
-  ctx.stroke();
-}
-function rectangle(a, b) {
-  ctx.beginPath();
-  ctx.moveTo(a.x, a.y);
-  ctx.lineTo(b.x, a.y);
-  ctx.lineTo(b.x, b.y);
-  ctx.lineTo(a.x, b.y);
-  ctx.stroke();
-}
-function line(a, b) {
-  ctx.beginPath();
-  ctx.moveTo(a.x, a.y);
-  ctx.lineTo(b.x, b.y);
-  ctx.stroke();
+class Funs {
+  static triangle(a, b, c) {
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.lineTo(c.x, c.y);
+    ctx.lineTo(a.x, a.y);
+    ctx.stroke();
+  }
+  static rectangle(a, b) {
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.lineTo(a.x, b.y);
+    ctx.stroke();
+  }
+  static line(a, b) {
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+  }
 }
 
 const lt = new Vector2(0, 0);
@@ -60,27 +61,27 @@ const prevMPos = new Vector2(vw / 2, vh / 2);
 function mouseDelta() {
   return new Vector2(mPos.x - prevMPos.x, mPos.y - prevMPos.y);
 }
-class Functions {
+class DrawFunction {
   static triangles() {
     ctx.fillStyle = "rgba(256,256,256,0.3)";
     ctx.fillRect(0, 0, vw, vh);
-    triangle(lt, rt, mPos);
-    triangle(rt, rb, mPos);
-    triangle(lb, lb, mPos);
-    triangle(lb, lt, mPos);
+    Funs.triangle(lt, rt, mPos);
+    Funs.triangle(rt, rb, mPos);
+    Funs.triangle(lb, lb, mPos);
+    Funs.triangle(lb, lt, mPos);
   }
   static rectangles() {
     ctx.fillStyle = "rgba(256,256,256,0.3)";
     ctx.fillRect(0, 0, vw, vh);
-    rectangle(lt, mPos);
-    rectangle(rt, mPos);
-    rectangle(lb, mPos);
-    rectangle(lb, mPos);
+    Funs.rectangle(lt, mPos);
+    Funs.rectangle(rt, mPos);
+    Funs.rectangle(lb, mPos);
+    Funs.rectangle(lb, mPos);
   }
   static line() {
     ctx.fillStyle = "rgba(256,256,256,0.1)";
     ctx.fillRect(0, 0, vw, vh);
-    line(prevMPos, mPos);
+    Funs.line(prevMPos, mPos);
   }
   static multiLines() {
     ctx.fillStyle = "rgba(256,256,256,0.1)";
@@ -92,7 +93,11 @@ class Functions {
   }
 }
 
-const foreground = [Functions.triangles, Functions.rectangles, Functions.line];
+const foreground = [
+  DrawFunction.triangles,
+  DrawFunction.rectangles,
+  DrawFunction.line,
+];
 var currentForeground = 0;
 
 function SwapForeground() {
