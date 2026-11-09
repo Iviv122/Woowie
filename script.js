@@ -29,6 +29,9 @@ class Vector2 {
   sub(other) {
     return new Vector2(this.x - other.x, this.y - other.y);
   }
+  divide(number) {
+    return new Vector2(this.x / number, this.y / number);
+  }
 }
 class Funs {
   static triangle(a, b, c) {
@@ -68,6 +71,22 @@ function mouseDelta() {
   return new Vector2(mPos.x - prevMPos.x, mPos.y - prevMPos.y);
 }
 class DrawFunction {
+  static initScreen() {
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = "bold 24px Arial";
+    ctx.fillText(
+      "Click left mouse button to change mouse interact",
+      center.x,
+      center.add(center.divide(4)).y,
+    );
+    ctx.fillText("Mouse wheel to change stroke color", center.x, center.y);
+    ctx.fillText(
+      "Click right mouse button to change background",
+      center.x,
+      center.sub(center.divide(4)).y,
+    );
+  }
   static triangles() {
     ctx.fillStyle = "rgba(256,256,256,0.3)";
     ctx.fillRect(0, 0, vw, vh);
@@ -89,7 +108,7 @@ class DrawFunction {
     ctx.fillRect(0, 0, vw, vh);
     Funs.line(prevMPos, mPos);
   }
-  static DuoLines() {
+  static duoLines() {
     ctx.fillStyle = "rgba(256,256,256,0.1)";
     ctx.fillRect(0, 0, vw, vh);
 
@@ -101,7 +120,7 @@ class DrawFunction {
     Funs.line(prevMPos, mPos);
     Funs.line(v1, v2);
   }
-  static QuadLines() {
+  static quadLines() {
     ctx.fillStyle = "rgba(256,256,256,0.1)";
     ctx.fillRect(0, 0, vw, vh);
 
@@ -128,11 +147,13 @@ const foreground = [
   DrawFunction.triangles,
   DrawFunction.rectangles,
   DrawFunction.line,
-  DrawFunction.DuoLines,
-  DrawFunction.QuadLines,
+  DrawFunction.duoLines,
+  DrawFunction.quadLines,
 ];
 var currentForeground = -1; // init fun is -1 so reset on first swap
-var currentFun = () => {console.log("Dummy fun ;p")};
+var currentFun = () => {
+  DrawFunction.initScreen();
+};
 
 function SwapForeground() {
   currentForeground = currentForeground + 1;
@@ -144,6 +165,12 @@ function draw() {
   currentFun();
   requestAnimationFrame(draw);
 }
+var color = 0;
+function SetColor(e) {
+  color += e.deltaY;
+  ctx.strokeStyle = `hsl(${color}, 100%, 50%)`;
+  console.log(ctx.fillStyle);
+}
 function GetMousePos(e) {
   prevMPos.x = mPos.x;
   prevMPos.y = mPos.y;
@@ -151,9 +178,7 @@ function GetMousePos(e) {
   mPos.y = e.clientY;
 }
 
-var drawLineThread;
-document.addEventListener("mousemove", (e) => {
-  GetMousePos(e);
-  drawLineThread = requestAnimationFrame(draw);
-});
+document.addEventListener("mousemove", GetMousePos);
 document.addEventListener("mousedown", SwapForeground);
+document.addEventListener("wheel", SetColor);
+draw();
