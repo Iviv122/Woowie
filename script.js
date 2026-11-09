@@ -98,9 +98,29 @@ class DrawFunction {
       Math.abs(vh - prevMPos.y),
     );
     const v2 = new Vector2(Math.abs(vw - mPos.x), Math.abs(vh - mPos.y));
-
     Funs.line(prevMPos, mPos);
     Funs.line(v1, v2);
+  }
+  static QuadLines() {
+    ctx.fillStyle = "rgba(256,256,256,0.1)";
+    ctx.fillRect(0, 0, vw, vh);
+
+    const rb1 = new Vector2(
+      Math.abs(vw - prevMPos.x),
+      Math.abs(vh - prevMPos.y),
+    );
+    const rb2 = new Vector2(Math.abs(vw - mPos.x), Math.abs(vh - mPos.y));
+
+    const rt1 = new Vector2(Math.abs(vw - prevMPos.x), prevMPos.y);
+    const rt2 = new Vector2(Math.abs(vw - mPos.x), mPos.y);
+
+    const lb1 = new Vector2(prevMPos.x, Math.abs(vh - prevMPos.y));
+    const lb2 = new Vector2(mPos.x, Math.abs(vh - mPos.y));
+
+    Funs.line(prevMPos, mPos); // left top
+    Funs.line(rb1, rb2);
+    Funs.line(rt1, rt2);
+    Funs.line(lb1, lb2);
   }
 }
 
@@ -109,16 +129,19 @@ const foreground = [
   DrawFunction.rectangles,
   DrawFunction.line,
   DrawFunction.DuoLines,
+  DrawFunction.QuadLines,
 ];
-var currentForeground = 0;
+var currentForeground = -1; // init fun is -1 so reset on first swap
+var currentFun = () => {console.log("Dummy fun ;p")};
 
 function SwapForeground() {
   currentForeground = currentForeground + 1;
   currentForeground %= foreground.length;
+  currentFun = foreground[currentForeground];
 }
 
 function draw() {
-  foreground[currentForeground]();
+  currentFun();
   requestAnimationFrame(draw);
 }
 function GetMousePos(e) {
@@ -128,7 +151,9 @@ function GetMousePos(e) {
   mPos.y = e.clientY;
 }
 
-draw();
-
-document.addEventListener("mousemove", GetMousePos);
+var drawLineThread;
+document.addEventListener("mousemove", (e) => {
+  GetMousePos(e);
+  drawLineThread = requestAnimationFrame(draw);
+});
 document.addEventListener("mousedown", SwapForeground);
