@@ -41,6 +41,12 @@ function rectangle(a, b) {
   ctx.lineTo(a.x, b.y);
   ctx.stroke();
 }
+function line(a, b) {
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.stroke();
+}
 
 const lt = new Vector2(0, 0);
 const rt = new Vector2(vw, 0);
@@ -48,31 +54,47 @@ const lb = new Vector2(0, vh);
 const rb = new Vector2(vw, vh);
 const center = new Vector2(vw / 2, vh / 2);
 
-var mPos = new Vector2(0, 0);
-function GetMousePos(e) {
-  mPos.x = e.clientX;
-  mPos.y = e.clientY;
+const mPos = new Vector2(vw / 2, vh / 2);
+const prevMPos = new Vector2(vw / 2, vh / 2);
+
+function mouseDelta() {
+  return new Vector2(mPos.x - prevMPos.x, mPos.y - prevMPos.y);
+}
+class Functions {
+  static triangles() {
+    ctx.fillStyle = "rgba(256,256,256,0.3)";
+    ctx.fillRect(0, 0, vw, vh);
+    triangle(lt, rt, mPos);
+    triangle(rt, rb, mPos);
+    triangle(lb, lb, mPos);
+    triangle(lb, lt, mPos);
+  }
+  static rectangles() {
+    ctx.fillStyle = "rgba(256,256,256,0.3)";
+    ctx.fillRect(0, 0, vw, vh);
+    rectangle(lt, mPos);
+    rectangle(rt, mPos);
+    rectangle(lb, mPos);
+    rectangle(lb, mPos);
+  }
+  static line() {
+    ctx.fillStyle = "rgba(256,256,256,0.1)";
+    ctx.fillRect(0, 0, vw, vh);
+    line(prevMPos, mPos);
+  }
+  static multiLines() {
+    ctx.fillStyle = "rgba(256,256,256,0.1)";
+    ctx.fillRect(0, 0, vw, vh);
+    ctx.beginPath();
+    ctx.moveTo(prevMPos.x, prevMPos.y);
+    ctx.lineTo(mPos.x, mPos.y);
+    ctx.stroke();
+  }
 }
 
-function triangles() {
-  ctx.fillStyle = "rgba(256,256,256,0.3)";
-  ctx.fillRect(0, 0, vw, vh);
-  triangle(lt, rt, mPos);
-  triangle(rt, rb, mPos);
-  triangle(lb, lb, mPos);
-  triangle(lb, lt, mPos);
-}
-function rectangles() {
-  ctx.fillStyle = "rgba(256,256,256,0.3)";
-  ctx.fillRect(0, 0, vw, vh);
-  rectangle(lt, mPos);
-  rectangle(rt, mPos);
-  rectangle(lb, mPos);
-  rectangle(lb, mPos);
-}
-
-const foreground = [triangles, rectangles];
+const foreground = [Functions.triangles, Functions.rectangles, Functions.line];
 var currentForeground = 0;
+
 function SwapForeground() {
   currentForeground = currentForeground + 1;
   currentForeground %= foreground.length;
@@ -81,6 +103,12 @@ function SwapForeground() {
 function draw() {
   foreground[currentForeground]();
   requestAnimationFrame(draw);
+}
+function GetMousePos(e) {
+  prevMPos.x = mPos.x;
+  prevMPos.y = mPos.y;
+  mPos.x = e.clientX;
+  mPos.y = e.clientY;
 }
 
 draw();
