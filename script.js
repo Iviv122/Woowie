@@ -88,30 +88,21 @@ class DrawFunction {
     );
   }
   static triangles() {
-    ctx.fillStyle = "rgba(256,256,256,0.3)";
-    ctx.fillRect(0, 0, vw, vh);
     Funs.triangle(lt, rt, mPos);
     Funs.triangle(rt, rb, mPos);
     Funs.triangle(lb, lb, mPos);
     Funs.triangle(lb, lt, mPos);
   }
   static rectangles() {
-    ctx.fillStyle = "rgba(256,256,256,0.3)";
-    ctx.fillRect(0, 0, vw, vh);
     Funs.rectangle(lt, mPos);
     Funs.rectangle(rt, mPos);
     Funs.rectangle(lb, mPos);
     Funs.rectangle(lb, mPos);
   }
   static line() {
-    ctx.fillStyle = "rgba(256,256,256,0.1)";
-    ctx.fillRect(0, 0, vw, vh);
     Funs.line(prevMPos, mPos);
   }
   static duoLines() {
-    ctx.fillStyle = "rgba(256,256,256,0.1)";
-    ctx.fillRect(0, 0, vw, vh);
-
     const v1 = new Vector2(
       Math.abs(vw - prevMPos.x),
       Math.abs(vh - prevMPos.y),
@@ -121,9 +112,6 @@ class DrawFunction {
     Funs.line(v1, v2);
   }
   static quadLines() {
-    ctx.fillStyle = "rgba(256,256,256,0.1)";
-    ctx.fillRect(0, 0, vw, vh);
-
     const rb1 = new Vector2(
       Math.abs(vw - prevMPos.x),
       Math.abs(vh - prevMPos.y),
@@ -140,6 +128,21 @@ class DrawFunction {
     Funs.line(rb1, rb2);
     Funs.line(rt1, rt2);
     Funs.line(lb1, lb2);
+  }
+}
+
+class BackgroundFunction {
+  static PlainWhite() {
+    ctx.fillStyle = "rgb(256,256,256)";
+    ctx.fillRect(0, 0, vw, vh);
+  }
+  static PlainGray() {
+    ctx.fillStyle = "#3b3440";
+    ctx.fillRect(0, 0, vw, vh);
+  }
+  static PlainBlack() {
+    ctx.fillStyle = "rgb(0,0,0)";
+    ctx.fillRect(0, 0, vw, vh);
   }
 }
 
@@ -161,7 +164,21 @@ function SwapForeground() {
   currentFun = foreground[currentForeground];
 }
 
+const background = [
+  BackgroundFunction.PlainWhite,
+  BackgroundFunction.PlainGray,
+  BackgroundFunction.PlainBlack,
+];
+var currentBackground = 0;
+
+function SwapBackground(e) {
+  e.preventDefault();
+  currentBackground = currentBackground + 1;
+  currentBackground %= background.length;
+}
+
 function draw() {
+  background[currentBackground]();
   currentFun();
   requestAnimationFrame(draw);
 }
@@ -169,7 +186,6 @@ var color = 0;
 function SetColor(e) {
   color += e.deltaY;
   ctx.strokeStyle = `hsl(${color}, 100%, 50%)`;
-  console.log(ctx.fillStyle);
 }
 function GetMousePos(e) {
   prevMPos.x = mPos.x;
@@ -178,7 +194,8 @@ function GetMousePos(e) {
   mPos.y = e.clientY;
 }
 
+draw();
 document.addEventListener("mousemove", GetMousePos);
 document.addEventListener("mousedown", SwapForeground);
+document.addEventListener("contextmenu", SwapBackground);
 document.addEventListener("wheel", SetColor);
-draw();
