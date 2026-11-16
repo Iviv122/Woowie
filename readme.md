@@ -3,6 +3,8 @@ pain
 
 WOowie - simple fun app where you draw with simetrical dotes made in pure* JS
 
+Demo: https://iviv122.github.io/Woowie/
+
 - contains html to load js
 
 Controls:
