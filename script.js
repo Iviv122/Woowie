@@ -75,7 +75,7 @@ class DrawFunction {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = "bold 24px Arial";
-    ctx.fillStyle = ctx.strokeStyle
+    ctx.fillStyle = ctx.strokeStyle;
     ctx.fillText(
       "Click left mouse button to change mouse interact",
       center.x,
